@@ -6,15 +6,18 @@ import CollectorForm from "./CollectorForm";
 import LoginPage from "./LoginPage";
 import ProtectedRoute from "./ProtectedRoute";
 import { trackVisit } from "./api";
-import doodleBottleBlue from "./assets/doodles/doodle-bottle-blue.svg";
-import doodleCupBlue from "./assets/doodles/doodle-cup-blue.svg";
-import doodleToothbrushGreen from "./assets/doodles/doodle-toothbrush-green.svg";
-import doodleForkYellow from "./assets/doodles/doodle-fork-yellow.svg";
-import doodleBagGreen from "./assets/doodles/doodle-bag-green.svg";
-import doodleRingsBlue from "./assets/doodles/doodle-rings-blue.svg";
-import doodleCrumpleGray from "./assets/doodles/doodle-crumple-gray.svg";
-import doodleCardboardBrown from "./assets/doodles/doodle-cardboard-brown.svg";
+import plasticBottle from "./assets/items/plastic_bottle.png";
+import crumpledPaper from "./assets/items/crumpled_paper.png";
+import tinCan from "./assets/items/tin_can.png";
+import glassBottle from "./assets/items/glass_bottle.png";
+import cardboardPiece from "./assets/items/cardboard.png";
 import "./App.css";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import Lenis from "lenis";
+
+gsap.registerPlugin(ScrollTrigger);
 
 // ── Tutorials ─────────────────────────────────────────────────
 const tutorials = {
@@ -65,19 +68,22 @@ function MainApp() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const updateScrollVar = () => {
-      const scrollY = window.scrollY;
-      const phase = Math.min(2, scrollY / Math.max(window.innerHeight, 1));
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+      smoothWheel: true,
+    });
 
-      document.documentElement.style.setProperty("--scrollY", `${scrollY}px`);
-      document.documentElement.style.setProperty("--scrollPhase", phase.toFixed(3));
-    };
+    lenis.on('scroll', ScrollTrigger.update);
 
-    updateScrollVar();
-    window.addEventListener("scroll", updateScrollVar, { passive: true });
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0, 0);
 
     return () => {
-      window.removeEventListener("scroll", updateScrollVar);
+      lenis.destroy();
+      gsap.ticker.remove((time) => lenis.raf(time * 1000));
     };
   }, []);
 
@@ -90,7 +96,7 @@ function MainApp() {
   // ── collectors list — fetched from MongoDB on mount
   const [collectors, setCollectors] = useState([]);
 
-  useEffect(() => {
+  useGSAP(() => {
     const selectors = [
       ".section-title",
       ".section-subtitle",
@@ -101,28 +107,89 @@ function MainApp() {
       ".register-cta",
       ".video-card"
     ];
+    
+    // Add base reveal class
+    document.querySelectorAll(selectors.join(",")).forEach((el) => {
+      el.classList.add("reveal-item");
+    });
 
-    const elements = document.querySelectorAll(selectors.join(","));
-    elements.forEach((el) => el.classList.add("reveal-item"));
+    // Staggered Reveals (Upgraded dynamic 3D springing)
+    ScrollTrigger.batch(".reveal-item", {
+      onEnter: (elements) => gsap.fromTo(elements, 
+        { opacity: 0, y: 80, scale: 0.95, rotationX: 10 },
+        { opacity: 1, y: 0, scale: 1, rotationX: 0, stagger: 0.12, duration: 1.4, ease: "expo.out" }
+      ),
+      start: "top 85%"
+    });
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-          }
-        });
-      },
-      { threshold: 0.16 }
-    );
+    // Scrollytelling Background Interp
+    const sections = [
+      { id: ".home-section", color: "#edf2ef" },
+      { id: ".ideas-section", color: "#fdfefd" },
+      { id: ".tutorials-section", color: "#59785c" },
+      { id: ".services-section", color: "#edf2ef" },
+      { id: ".about-section", color: "#dce9dc" }
+    ];
 
-    elements.forEach((el) => observer.observe(el));
+    sections.forEach((sec, i) => {
+      if (i === 0) return;
+      ScrollTrigger.create({
+        trigger: sec.id,
+        start: "top 50%",
+        end: "top 10%",
+        scrub: true,
+        animation: gsap.to("body", { backgroundColor: sec.color, ease: "none" })
+      });
+    });
 
-    return () => {
-      elements.forEach((el) => observer.unobserve(el));
-      observer.disconnect();
-    };
-  }, [hasSearched, results.length, collectors.length]);
+    // GSAP Parallax physics applied to trash items (Upgraded with 3D drift)
+    gsap.utils.toArray(".trash-item").forEach((item, index) => {
+      const speed = item.classList.contains('trash-bottle') ? 2.2 :
+                    item.classList.contains('trash-bag') ? 1.5 :
+                    item.classList.contains('trash-cardboard') ? 2.8 :
+                    item.classList.contains('trash-cup') ? 0.9 : 1.4;
+      
+      const dir = index % 2 === 0 ? 1 : -1;
+
+      gsap.to(item, {
+        y: () => -1 * speed * 500,
+        x: () => dir * speed * 120, // Diagonal drift
+        rotation: () => dir * speed * 45,
+        scale: () => 1 + (speed * 0.15), // Parallax zoom-in depth
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".home-section",
+          start: "top top",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+    });
+
+    // Signature horizontal scrollytelling for title lines
+    gsap.to(".title-row-left", {
+      xPercent: -40,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".home-section",
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    });
+
+    gsap.to(".title-row-right", {
+      xPercent: 40,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".home-section",
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    });
+
+  }, { dependencies: [hasSearched, results.length, collectors.length] });
 
   // Fetch collectors from MongoDB filtered by searched item
   useEffect(() => {
@@ -223,6 +290,7 @@ function MainApp() {
 
   return (
     <div>
+      <div className="grain-overlay"></div>
 
       {/* ── REGISTRATION MODAL ─────────────────────────────
            Only rendered when showForm === true              */}
@@ -254,23 +322,24 @@ function MainApp() {
       <section id="home" className="section home-section">
         <div className="trash-parallax" aria-hidden="true">
           <div className="trash-set trash-set-a">
-            <img className="trash-item trash-bottle" src={doodleBottleBlue} alt="" />
-            <img className="trash-item trash-crumple" src={doodleCrumpleGray} alt="" />
-            <img className="trash-item trash-cardboard" src={doodleCardboardBrown} alt="" />
-            <img className="trash-item trash-cup" src={doodleCupBlue} alt="" />
-            <img className="trash-item trash-toothbrush" src={doodleToothbrushGreen} alt="" />
+            <img className="trash-item trash-cardboard" src={cardboardPiece} alt="" />
+            <img className="trash-item trash-cup" src={glassBottle} alt="" />
+            <img className="trash-item trash-toothbrush" src={tinCan} alt="" />
           </div>
           <div className="trash-set trash-set-b">
-            <img className="trash-item trash-bag" src={doodleBagGreen} alt="" />
-            <img className="trash-item trash-rings" src={doodleRingsBlue} alt="" />
-            <img className="trash-item trash-fork" src={doodleForkYellow} alt="" />
-            <img className="trash-item trash-cardboard-b" src={doodleCardboardBrown} alt="" />
-            <img className="trash-item trash-cup-b" src={doodleCupBlue} alt="" />
+            <img className="trash-item trash-bag" src={plasticBottle} alt="" />
+            <img className="trash-item trash-rings" src={tinCan} alt="" />
+            <img className="trash-item trash-fork" src={plasticBottle} alt="" />
+            <img className="trash-item trash-cardboard-b" src={cardboardPiece} alt="" />
+            <img className="trash-item trash-cup-b" src={crumpledPaper} alt="" />
           </div>
         </div>
         <div className="home-content">
-          <h2 className="home-title">
-            Turn Waste Into <span className="accent">Something Useful</span>
+          <h2 className="home-title gsap-home-title">
+            <div className="title-row title-row-left">TURN WASTE</div>
+            <div className="title-row title-row-right">
+              INTO <span className="accent">SOMETHING</span>
+            </div>
           </h2>
           <p className="home-subtitle">
             Search any household waste item and get creative reuse ideas,
@@ -289,6 +358,7 @@ function MainApp() {
 
       {/* ── IDEAS ───────────────────────────────────────── */}
       <section id="ideas" className="section ideas-section">
+        <div className="outlined-title">IDEAS IDEAS</div>
         <h2 className="section-title">💡 Ideas</h2>
         <p className="section-subtitle">
           <b>Don't Trash It — Re-Imagine It.</b>
@@ -328,6 +398,7 @@ function MainApp() {
 
       {/* ── TUTORIALS ───────────────────────────────────── */}
       <section id="tutorials" className="section tutorials-section">
+        <div className="outlined-title outlined-light">TUTORIALS</div>
         <h2 className="section-title">🎬 Tutorials</h2>
         <p className="section-subtitle">
           {hasSearched
@@ -365,6 +436,7 @@ function MainApp() {
 
       {/* ── SERVICES ────────────────────────────────────── */}
       <section id="services" className="section services-section">
+        <div className="outlined-title">SERVICES</div>
         <h2 className="section-title">🛠️ Nearby Services</h2>
         <p className="section-subtitle">
           People and organisations near you who collect or upcycle waste.
@@ -464,6 +536,7 @@ function MainApp() {
 
       {/* ── ABOUT ───────────────────────────────────────── */}
       <section id="about" className="section about-section">
+        <div className="outlined-title">ABOUT ABOUT</div>
         <h2 className="section-title">🧠 About</h2>
         <div className="about-grid">
           <div className="about-card">

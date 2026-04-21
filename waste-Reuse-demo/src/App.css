@@ -27,18 +27,46 @@
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 body {
   position: relative;
   font-family: "Manrope", "Segoe UI", sans-serif;
-  background:
-    radial-gradient(circle at 8% 12%, rgba(203, 223, 203, 0.6) 0%, rgba(203, 223, 203, 0) 45%),
-    radial-gradient(circle at 86% 18%, rgba(163, 196, 166, 0.42) 0%, rgba(163, 196, 166, 0) 43%),
-    linear-gradient(180deg, #fcfdfc 0%, #f4f7f4 100%);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 8% 12%, rgba(203, 223, 203, 0.4) 0%, rgba(203, 223, 203, 0) 45%),
+    radial-gradient(circle at 86% 18%, rgba(163, 196, 166, 0.3) 0%, rgba(163, 196, 166, 0) 43%);
   color: var(--text);
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Premium Grain Overlay */
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.06;
+  mix-blend-mode: overlay;
 }
 
 body::before,
@@ -59,7 +87,7 @@ body::before {
   background:
     radial-gradient(circle at 40% 40%, rgba(173, 204, 174, 0.38) 0%, rgba(173, 204, 174, 0.08) 34%, rgba(173, 204, 174, 0) 66%),
     conic-gradient(from 10deg at 50% 50%, rgba(112, 145, 118, 0.14), rgba(112, 145, 118, 0));
-  transform: translateY(calc(var(--scrollY) * -0.06));
+  animation: float-slow 12s infinite ease-in-out;
 }
 
 body::after {
@@ -70,18 +98,13 @@ body::after {
   background:
     radial-gradient(circle at 35% 35%, rgba(102, 135, 107, 0.28) 0%, rgba(102, 135, 107, 0.04) 44%, rgba(102, 135, 107, 0) 72%),
     repeating-radial-gradient(circle at center, rgba(228, 239, 220, 0.28) 0 6px, rgba(228, 239, 220, 0) 6px 24px);
-  transform: translateY(calc(var(--scrollY) * 0.08));
+  animation: pulse-glow 15s infinite ease-in-out;
 }
 
 .reveal-item {
   opacity: 0;
   transform: translateY(38px) scale(0.985);
-  transition: opacity 0.75s ease, transform 0.75s ease;
-}
-
-.reveal-item.is-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+  /* Transtions handled securely by GSAP now! */
 }
 
 .accent {
@@ -203,48 +226,77 @@ body::after {
 }
 
 .section {
-  position: relative;
-  z-index: 1;
+  position: sticky;
+  top: 0;
+  width: 100%;
   min-height: 100vh;
-  padding: 96px 24px 64px;
+  margin: 0;
+  padding: 10vh 5vw;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
-  overflow: visible;
+  overflow: hidden;
+  box-shadow: 0 -15px 40px rgba(0,0,0,0.08); /* Cast shadow on prev section pinned under it */
+  border-radius: 0;
 }
 
-.section::before {
-  content: "";
-  position: absolute;
-  width: 380px;
-  height: 380px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(124, 161, 130, 0.2) 0%, rgba(124, 161, 130, 0) 66%);
-  top: -120px;
-  right: -90px;
-  transform: translateY(calc(var(--scrollY) * 0.06));
-  pointer-events: none;
-}
-
-.section::after {
-  content: "";
-  position: absolute;
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  left: -50px;
-  bottom: -70px;
-  background: radial-gradient(circle, rgba(176, 199, 177, 0.26) 0%, rgba(176, 199, 177, 0) 70%);
-  transform: translateY(calc(var(--scrollY) * -0.04));
-  pointer-events: none;
-}
-
-.section > * {
-  position: relative;
+.home-section {
   z-index: 1;
+  background-color: #edf2ef;
+}
+.ideas-section {
+  z-index: 2;
+  background-color: #fdfefd;
+}
+.tutorials-section {
+  z-index: 3;
+  background-color: #59785c;
+  color: #fff;
+}
+.services-section {
+  z-index: 4;
+  background-color: #edf2ef;
+}
+.about-section {
+  z-index: 5;
+  background-color: #dce9dc;
 }
 
-.section-title {
+/* ─────────────────────────────────────────────────────────────
+   3. OUTLINED MARQUEE BACKGROUND TITLES
+   ───────────────────────────────────────────────────────────── */
+.outlined-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: "League Spartan", sans-serif;
+  font-size: clamp(100px, 25vw, 400px);
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(98, 128, 102, 0.15); /* Subtly dark green outline */
+  white-space: nowrap;
+  letter-spacing: 2px;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.outlined-light {
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.12); /* Light outline for dark backgrounds */
+}
+
+/* Make sure interactive elements stay above the giant wording */
+.section > *:not(.outlined-title, .trash-parallax) {
+  position: relative;
+  z-index: 10;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. LAYOUT / UTILITIES
+   ───────────────────────────────────────────────────────────── */.section-title {
   font-family: "League Spartan", sans-serif;
   font-size: clamp(31px, 4vw, 48px);
   line-height: 1.08;
@@ -309,14 +361,14 @@ body::after {
   opacity: 0.95;
   user-select: none;
   will-change: transform;
+  mix-blend-mode: multiply;
 }
 
 .trash-bottle {
   width: clamp(220px, 27vw, 390px);
   left: 8%;
   top: 20%;
-  transform: translateY(calc(var(--scrollY) * -0.12)) rotate(-8deg);
-  animation: float-slow 5.5s ease-in-out infinite;
+  /* GSAP handles y offset */
 }
 
 .trash-bottle::after,
@@ -340,72 +392,54 @@ body::after {
   width: clamp(200px, 24vw, 350px);
   left: 33%;
   bottom: -3%;
-  transform: translateY(calc(var(--scrollY) * 0.1)) rotate(-9deg);
-  animation: sway 7s ease-in-out infinite;
 }
 
 .trash-toothbrush {
   width: clamp(130px, 17vw, 250px);
   left: 17%;
   bottom: 22%;
-  transform: translateY(calc(var(--scrollY) * 0.15)) rotate(16deg);
-  animation: tumble 6.2s ease-in-out infinite;
 }
 
 .trash-crumple {
   width: clamp(130px, 16vw, 240px);
   left: 40%;
   top: 16%;
-  transform: translateY(calc(var(--scrollY) * -0.09));
-  animation: sway 5.8s ease-in-out infinite;
 }
 
 .trash-cardboard {
   width: clamp(230px, 28vw, 420px);
   right: 10%;
   top: 14%;
-  transform: translateY(calc(var(--scrollY) * -0.08)) rotate(11deg);
-  animation: float-slow 7s ease-in-out infinite;
 }
 
 .trash-cup {
   width: clamp(110px, 14vw, 210px);
   right: 31%;
   bottom: 20%;
-  transform: translateY(calc(var(--scrollY) * 0.12)) rotate(-8deg);
-  animation: tumble 6s ease-in-out infinite;
 }
 
 .trash-fork {
   width: clamp(120px, 15vw, 220px);
   right: 31%;
   top: 26%;
-  transform: translateY(calc(var(--scrollY) * -0.13)) rotate(13deg);
-  animation: sway 6.5s ease-in-out infinite;
 }
 
 .trash-rings {
   width: clamp(120px, 14vw, 220px);
   left: 62%;
   top: 47%;
-  transform: translateY(calc(var(--scrollY) * 0.11)) rotate(-4deg);
-  animation: float-slow 6.8s ease-in-out infinite;
 }
 
 .trash-cardboard-b {
   width: clamp(200px, 25vw, 360px);
   right: 9%;
   top: 18%;
-  transform: translateY(calc(var(--scrollY) * -0.06)) rotate(-10deg);
-  animation: tumble 7.2s ease-in-out infinite;
 }
 
 .trash-cup-b {
   width: clamp(100px, 13vw, 190px);
   left: 50%;
   bottom: 14%;
-  transform: translateY(calc(var(--scrollY) * 0.14)) rotate(12deg);
-  animation: sway 5.7s ease-in-out infinite;
 }
 
 .trash-parallax::before,
@@ -431,7 +465,6 @@ body::after {
     linear-gradient(120deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0) 28%, rgba(113, 142, 116, 0.08) 50%, rgba(255, 255, 255, 0) 72%, rgba(255, 255, 255, 0.02));
   mix-blend-mode: multiply;
   opacity: 0.6;
-  transform: translateY(calc(var(--scrollY) * -0.02));
 }
 
 .home-section::before {
@@ -442,7 +475,6 @@ body::after {
   bottom: -170px;
   left: -120px;
   background: radial-gradient(circle, rgba(231, 243, 218, 0.16) 0%, rgba(231, 243, 218, 0) 70%);
-  transform: translateY(calc(var(--scrollY) * -0.08));
 }
 
 .home-section::after {
@@ -456,7 +488,6 @@ body::after {
   background:
     radial-gradient(circle at 36% 35%, rgba(218, 236, 194, 0.4) 0%, rgba(218, 236, 194, 0.08) 30%, rgba(218, 236, 194, 0) 56%),
     repeating-radial-gradient(circle at center, rgba(230, 243, 214, 0.13) 0 8px, rgba(230, 243, 214, 0) 8px 28px);
-  transform: translateY(calc(var(--scrollY) * 0.05));
   pointer-events: none;
 }
 
@@ -508,7 +539,6 @@ body::after {
   top: 7%;
   background:
     radial-gradient(circle at 40% 40%, rgba(229, 241, 210, 0.65) 0%, rgba(196, 218, 177, 0.35) 50%, rgba(196, 218, 177, 0) 76%);
-  transform: translateY(calc(var(--scrollY) * -0.07));
   animation: float-slow 6s ease-in-out infinite;
 }
 
@@ -518,7 +548,6 @@ body::after {
   right: 6%;
   bottom: 10%;
   background: radial-gradient(circle at 35% 35%, rgba(231, 243, 216, 0.52) 0%, rgba(231, 243, 216, 0) 72%);
-  transform: translateY(calc(var(--scrollY) * 0.09));
   animation: pulse-glow 7s ease-in-out infinite;
 }
 
@@ -532,7 +561,12 @@ body::after {
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 1px;
-  animation: title-flicker 8s ease-in-out infinite;
+  white-space: nowrap; /* keep lines from breaking so horizontal scroll works */
+}
+
+.title-row {
+  display: block;
+  will-change: transform;
 }
 
 .home-subtitle {
@@ -559,52 +593,6 @@ body::after {
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 22px rgba(27, 38, 29, 0.26);
-}
-
-.ideas-section,
-.services-section,
-.about-section {
-  width: 100%;
-  margin: 0;
-  border-radius: 0;
-  background:
-    linear-gradient(180deg, rgba(249, 251, 249, 0.98), rgba(240, 245, 240, 0.95)),
-    radial-gradient(circle at 15% 20%, rgba(201, 218, 202, 0.35) 0%, rgba(201, 218, 202, 0) 35%);
-  box-shadow: none;
-}
-
-.tutorials-section {
-  width: 100%;
-  margin: 0;
-  border-radius: 0;
-  background:
-    linear-gradient(170deg, rgba(79, 113, 85, 0.98), rgba(112, 149, 118, 0.96)),
-    radial-gradient(circle at 82% 20%, rgba(225, 240, 220, 0.2) 0%, rgba(225, 240, 220, 0) 40%);
-  box-shadow: none;
-}
-
-.ideas-section::before,
-.tutorials-section::before,
-.services-section::before,
-.about-section::before {
-  width: 500px;
-  height: 500px;
-  right: -160px;
-  top: -170px;
-  background: radial-gradient(circle, rgba(135, 171, 140, 0.2) 0%, rgba(135, 171, 140, 0) 68%);
-  transform: translateY(calc(var(--scrollY) * 0.045));
-}
-
-.ideas-section::after,
-.tutorials-section::after,
-.services-section::after,
-.about-section::after {
-  width: 300px;
-  height: 300px;
-  left: -90px;
-  bottom: -120px;
-  background: radial-gradient(circle, rgba(181, 204, 182, 0.28) 0%, rgba(181, 204, 182, 0) 72%);
-  transform: translateY(calc(var(--scrollY) * -0.05));
 }
 
 .tutorials-section .section-title,
