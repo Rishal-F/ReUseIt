@@ -1,3 +1,7 @@
+/**
+ * Login page component.
+ * Authenticates the user and stores session state in localStorage.
+ */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "./api";

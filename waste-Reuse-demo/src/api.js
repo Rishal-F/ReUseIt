@@ -1,3 +1,7 @@
+/**
+ * API utility module.
+ * Creates a reusable Axios instance for backend requests and tracks user interactions.
+ */
 import axios from "axios";
 
 const API = axios.create({

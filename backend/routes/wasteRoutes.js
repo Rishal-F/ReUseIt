@@ -2,6 +2,11 @@ const express = require("express");
 const router = express.Router();
 const WasteItem = require("../models/WasteItem");
 
+/**
+ * Waste item routes.
+ * GET /api/waste       - list all waste items
+ * POST /api/waste      - submit a new waste item row
+ */
 router.get("/", async (req, res) => {
   try {
     const data = await WasteItem.find();

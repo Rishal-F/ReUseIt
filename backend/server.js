@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
+/**
+ * Backend API server for Waste Reuse Helper.
+ * Provides route mounting, middleware setup, and MongoDB connection.
+ */
 const app = express();
 
 // ================= MIDDLEWARE =================
@@ -14,6 +18,7 @@ app.use("/api/waste", require("./routes/wasteRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/services", require("./routes/serviceRoutes"));
 app.use("/api/reuse", require("./routes/reuseIdeaRoutes"));
+app.use("/api/stats", require("./routes/statsRoutes"));
 
 // ================= MODEL SAFETY =================
 try {

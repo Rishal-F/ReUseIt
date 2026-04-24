@@ -2,6 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Service = require("../models/Service");
 
+/**
+ * Service / collector routes.
+ * GET /api/services      - list all services
+ * GET /api/services/search - search services by waste type
+ * POST /api/services/add - add a new service / collector
+ */
 // Get all services
 router.get("/", async (req, res) => {
   try {

@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 
+/**
+ * MongoDB schema for local recycling and collector services.
+ * Maps waste types to contact and location information.
+ */
 const schema = new mongoose.Schema({
   name: String,
   type: String,

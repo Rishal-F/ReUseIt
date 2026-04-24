@@ -1,3 +1,7 @@
+/**
+ * Base browser-reset and default typography styles.
+ * Keeps the app consistent across devices and browsers.
+ */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

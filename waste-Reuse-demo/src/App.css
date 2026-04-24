@@ -1,3 +1,7 @@
+/**
+ * Application-wide stylesheet for Waste Reuse Helper.
+ * Defines typography, layout, section styling, and component visuals.
+ */
 @import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800;900&family=Manrope:wght@400;500;700&display=swap");
 
 :root {
@@ -8,8 +12,7 @@
   --card: #fdfefd;
   --mint-100: #dce9dc;
   --mint-200: #c7dbc8;
-  --mint-500: #7e9f83;
-  --mint-700: #628166;
+  --mint-500: #7e9f83
   --mint-900: #3f5e46;
   --text: #233226;
   --muted: #6d7d70;
@@ -1425,4 +1428,29 @@ body::after {
   .trash-cup-b {
     display: none;
   }
+}
+/* Force the Stats Section to ignore the initial "invisible" state */
+.stats-section {
+  position: relative !important;
+  z-index: 10 !important;
+  opacity: 1 !important;
+  display: block !important;
+  min-height: auto !important; /* Prevents it from being a giant empty hole */
+  padding: 80px 20px !important;
+}
+
+.stats-container {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Ensure the cards inside the stats are visible even if GSAP fails */
+.stat-card {
+  opacity: 1 !important;
+  transform: none !important;
+  background: white !important;
+  border: 1px solid #d3ddd3 !important;
+  padding: 20px !important;
+  margin: 10px;
+  box-shadow: var(--shadow-card);
 }

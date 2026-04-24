@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
-
+/**
+ * MongoDB schema for waste items submitted by users.
+ * Each waste item links to the submitting user.
+ */
 const schema = new mongoose.Schema({
   name: String,
   category: String,

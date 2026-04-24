@@ -1,3 +1,7 @@
+/**
+ * ProtectedRoute wrapper component.
+ * Redirects unauthenticated users to the login page.
+ */
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {

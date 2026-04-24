@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 
+/**
+ * MongoDB schema for reuse ideas.
+ * Stores instructions and metadata for reusing a waste item.
+ */
 const schema = new mongoose.Schema({
   waste_name: String,
   category: String,
