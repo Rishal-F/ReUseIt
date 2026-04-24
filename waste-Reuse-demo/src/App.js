@@ -39,7 +39,7 @@ const tutorials = {
     { title: "Braided T-Shirt Rug Easy Tutorial",      views: "2.1M", duration: "14:22", query: "braided tshirt rug DIY easy" },
   ],
   "glass jar": [
-    { title: "DIY Glass Jar Candle Holders",         views: "2.3M", duration: "6:50", query: "glass jar candle holder DIY" },
+    { title: "DIY Glass Jar Candle Holders",          views: "2.3M", duration: "6:50", query: "glass jar candle holder DIY" },
     { title: "Growing Herbs in Glass Jars at Home", views: "1.5M", duration: "9:30", query: "grow herbs glass jar kitchen" },
   ],
   "cardboard box": [
@@ -142,7 +142,7 @@ function MainApp() {
       { id: ".ideas-section", color: "#fdfefd" },
       { id: ".tutorials-section", color: "#59785c" },
       { id: ".services-section", color: "#edf2ef" },
-      { id: ".stats-section", color: "#fdfefd" }, // Background logic for stats
+      { id: ".stats-section", color: "#fdfefd" }, 
       { id: ".about-section", color: "#dce9dc" }
     ];
 
@@ -198,12 +198,13 @@ function MainApp() {
   useEffect(() => {
     const fetchCollectors = async () => {
       try {
+        // FIXED TERNARY LOGIC BELOW
         const url = hasSearched 
           ? `http://localhost:5000/api/services/search?type=${encodeURIComponent(searchedItem)}`
-          : "http://localhost:5000/api/services";
+          : serviceKeyword 
           ? `http://localhost:5000/api/services/google-search?type=${encodeURIComponent(serviceKeyword)}`
           : "http://localhost:5000/api/services?validateWhatsapp=true";
-        
+
         const response = await fetch(url);
         const data = await response.json();
         if (Array.isArray(data)) setCollectors(data);
@@ -418,48 +419,18 @@ function MainApp() {
               </div>
               <div className="collector-addr">📍 {c.address}</div>
               <div className="collector-dist">✓ {c.distance || "Near you"}</div>
-              <a className="wa-btn" href={`https://wa.me/91${c.phone}?text=Hi! I found your listing on ReUseIt.`} target="_blank" rel="noreferrer">
-                💬 WhatsApp
-              </a>
-              {c.distance && <div className="collector-dist">✓ {c.distance} away</div>}
-
-              {/* Waste type tags — shown only for new registrations */}
-              {c.wasteTypes && c.wasteTypes.length > 0 && (
-                <div className="collector-waste-tags">
-                  {c.wasteTypes.map((w) => (
-                    <span key={w} className="waste-tag">{w}</span>
-                  ))}
-                </div>
-              )}
-
-              {/* Optional description */}
-              {c.description && (
-                <p className="collector-desc">"{c.description}"</p>
-              )}
-
+              
+              {/* Logic for WhatsApp Button */}
               {(() => {
-                const waLink = c.whatsappNumber
-                  ? getWhatsAppLink(
-                    c.whatsappNumber,
-                    "Hi! I found your listing on ReUseIt and I have some waste I'd like to give for reuse/recycling."
-                  )
+                const waLink = c.phone
+                  ? `https://wa.me/91${c.phone.replace(/\D/g, '')}?text=Hi! I found your listing on ReUseIt.`
                   : null;
 
-                if (!waLink) {
-                  return null;
-                }
-
-                return (
-                  <a
-                    className="wa-btn"
-                    onClick={() => trackVisit(c.name)}
-                    href={waLink}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                return waLink ? (
+                  <a className="wa-btn" href={waLink} target="_blank" rel="noreferrer" onClick={() => trackVisit(c.name)}>
                     💬 WhatsApp
                   </a>
-                );
+                ) : null;
               })()}
             </div>
           ))}
@@ -517,47 +488,13 @@ function MainApp() {
           <div className="footer-section">
             <h3>☎️ Contact</h3>
             <p>📩 support@reuseit.com</p>
-            <p>📍 India</p>
-          </div>
-          <div className="footer-section">
-            <h3>👩‍💻 Team</h3>
-            <p>Alciya · Nicole · Bliss · Rishal</p>
-            <p style={{ marginTop: "10px", fontSize: "12px", opacity: 0.6 }}>Engineering Mini Project 2026</p>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <p>© 2026 Waste Reuse Helper Project | Built with React & MongoDB</p>
-            <p>
-              A platform that helps users reuse waste by providing ideas, tutorials,
-              and connections to nearby recycling or upcycling services, promoting
-              sustainable consumption and cleaner communities.
-            </p>
-          </div>
-          <div className="footer-section">
-            <h3>☎ Contact</h3>
-            <p>8767463879, 98347 85341</p>
-            <p>
-              <a
-                href="https://wa.me/918767463879?text=Hi%20ReUseIt%20team%2C%20I%20want%20to%20know%20more%20about%20the%20platform."
-                target="_blank"
-                rel="noreferrer"
-              >
-                Chat on WhatsApp: 8767463879
-              </a>
-            </p>
+            <p>📞 8767463879, 98347 85341</p>
           </div>
           <div className="footer-section">
             <h3>👩‍💻 Team</h3>
             <p>Nicole Dabre, Alciya Dodti, Rishal Fernandes, Bliss Gonsalves</p>
-            <p>
-              <a
-                href="https://github.com/Alciya-dodti/waste-Reuse-demo"
-                target="_blank"
-                rel="noreferrer"
-              >
-                GitHub Repo
-              </a>
-            </p>
+            <p style={{ marginTop: "10px", fontSize: "12px", opacity: 0.6 }}>Engineering Mini Project 2026</p>
+            <a href="https://github.com/Rishal-F/ReUseIt" target="_blank" rel="noreferrer" style={{color: 'white', fontSize: '12px'}}>GitHub Repo</a>
           </div>
         </div>
         <div className="footer-bottom">
