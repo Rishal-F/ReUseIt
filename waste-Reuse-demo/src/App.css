@@ -267,6 +267,14 @@ body::after {
   background-color: #dce9dc;
 }
 
+/* Long sections should scroll in normal document flow to avoid overlap/cutoff. */
+.services-section,
+.about-section {
+  position: relative;
+  top: auto;
+  overflow: visible;
+}
+
 /* ─────────────────────────────────────────────────────────────
    3. OUTLINED MARQUEE BACKGROUND TITLES
    ───────────────────────────────────────────────────────────── */
@@ -1111,6 +1119,8 @@ body::after {
 }
 
 .footer {
+  position: relative;
+  z-index: 20;
   width: 100%;
   margin: 0;
   border-radius: 0;
@@ -1136,6 +1146,16 @@ body::after {
   color: rgba(227, 237, 220, 0.88);
   line-height: 1.6;
   font-size: 13px;
+}
+
+.footer-section a {
+  color: #f0f7e8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footer-section a:hover {
+  color: #ffffff;
 }
 
 .footer-bottom {

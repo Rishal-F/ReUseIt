@@ -1,23 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.c9248fae.css",
-    "main.js": "/static/js/main.3ff152af.js",
+    "main.css": "/static/css/main.1862fcd0.css",
+    "main.js": "/static/js/main.0c28b27d.js",
     "static/js/453.7a91718e.chunk.js": "/static/js/453.7a91718e.chunk.js",
+    "static/media/cardboard.png": "/static/media/cardboard.502bc5066b3e581bcd88.png",
+    "static/media/tin_can.png": "/static/media/tin_can.663c67621c650adf776f.png",
+    "static/media/plastic_bottle.png": "/static/media/plastic_bottle.9b3c4b665cbda594e313.png",
+    "static/media/crumpled_paper.png": "/static/media/crumpled_paper.40df111ef7b3acff8b3b.png",
+    "static/media/glass_bottle.png": "/static/media/glass_bottle.bf7b947dba8450666927.png",
     "index.html": "/index.html",
-    "static/media/doodle-fork-yellow.svg": "/static/media/doodle-fork-yellow.89ff874597ba91eda0933f83eef3ce03.svg",
-    "static/media/doodle-toothbrush-green.svg": "/static/media/doodle-toothbrush-green.5201a023b6a6b6066597f6c966770970.svg",
-    "static/media/doodle-cup-blue.svg": "/static/media/doodle-cup-blue.c8df1db3fcf427262ace6cfc3ae4daa9.svg",
-    "static/media/doodle-bottle-blue.svg": "/static/media/doodle-bottle-blue.3351ecc062e0e457995b35ffd9de2eb0.svg",
-    "static/media/doodle-bag-green.svg": "/static/media/doodle-bag-green.99a53fb931d0dfb7b9202c87dba90b45.svg",
-    "static/media/doodle-crumple-gray.svg": "/static/media/doodle-crumple-gray.0da32ebdfe3858805fdd18f5da47be32.svg",
-    "static/media/doodle-cardboard-brown.svg": "/static/media/doodle-cardboard-brown.f029b528caaf93732a81df23b058a8ce.svg",
-    "static/media/doodle-rings-blue.svg": "/static/media/doodle-rings-blue.c479e90adbcf236dae61f49937cdf68a.svg",
-    "main.c9248fae.css.map": "/static/css/main.c9248fae.css.map",
-    "main.3ff152af.js.map": "/static/js/main.3ff152af.js.map",
+    "main.1862fcd0.css.map": "/static/css/main.1862fcd0.css.map",
+    "main.0c28b27d.js.map": "/static/js/main.0c28b27d.js.map",
     "453.7a91718e.chunk.js.map": "/static/js/453.7a91718e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c9248fae.css",
-    "static/js/main.3ff152af.js"
+    "static/css/main.1862fcd0.css",
+    "static/js/main.0c28b27d.js"
   ]
 }
