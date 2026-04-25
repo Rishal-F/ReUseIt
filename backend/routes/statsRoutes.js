@@ -2,6 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Analytics = require("../models/Analytics");
 
+// In statsRoutes.js, inside $facet, add this:
+totalSearchCount: [
+  { $match: { actionType: "search" } },
+  { $count: "count" }
+],
+
 router.get("/", async (req, res) => {
   try {
     const results = await Analytics.aggregate([
@@ -12,10 +18,10 @@ router.get("/", async (req, res) => {
             { $count: "count" }
           ],
           totalSearches: [
-            { $match: { actionType: "search" } },
+            { $match: { actionType: "search", itemName: { $ne: null } } },
             { $group: { _id: "$itemName", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
-            { $limit: 5 }
+            { $limit: 10 }
           ],
           activeUsers: [
             { $match: { userId: { $ne: null } } },
@@ -28,6 +34,7 @@ router.get("/", async (req, res) => {
 
     const data = results[0] || {};
     res.json({
+      totalSearches: data.totalSearchCount?.[0]?.count || 0,
       totalLogins: data.totalLogins?.[0]?.count || 0,
       activeUsers: data.activeUsers?.[0]?.count || 0,
       topSearchedWasteItems: (data.totalSearches || []).map(item => ({

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const WasteItem = require("../models/WasteItem");
+const Analytics = require("../models/Analytics"); 
 
 /**
  * Waste item routes.
@@ -30,6 +31,16 @@ router.post("/", async (req, res) => {
       user
     });
     const savedWaste = await newWaste.save();
+    // Log to analytics
+try {
+  await Analytics.create({
+    actionType: "search",
+    itemName: name.toLowerCase().trim(),
+    userId: user || null
+  });
+} catch (err) {
+  console.error("Analytics log error:", err);
+}
     res.status(201).json(savedWaste);
   } catch (err) {
     res.status(500).json({ error: err.message });

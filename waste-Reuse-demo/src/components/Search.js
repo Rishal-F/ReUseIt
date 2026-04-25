@@ -7,7 +7,7 @@ function Search() {
 
   const handleSearch = async () => {
     try {
-      const res = await API.get(`/reuse/search?q=${query}`);
+      const res = await API.get(`/reuse/search?q=${encodeURIComponent(query.trim())}`);
       setResults(res.data);
     } catch (err) {
       console.log("Error:", err);

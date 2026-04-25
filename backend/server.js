@@ -3,10 +3,16 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-/**
- * Backend API server for Waste Reuse Helper.
- * Provides route mounting, middleware setup, and MongoDB connection.
- */
+// ROUTE IMPORTS
+const wasteRoutes = require("./routes/wasteRoutes");
+const userRoutes = require("./routes/userRoutes");
+const serviceRoutes = require("./routes/serviceRoutes");
+const reuseIdeaRoutes = require("./routes/reuseIdeaRoutes");
+
+// MODEL IMPORTS (just load them once)
+require("./models/ReuseIdea");
+require("./models/Service");
+
 const app = express();
 
 // ================= MIDDLEWARE =================
@@ -14,20 +20,10 @@ app.use(cors());
 app.use(express.json());
 
 // ================= ROUTES =================
-app.use("/api/waste", require("./routes/wasteRoutes"));
-app.use("/api/users", require("./routes/userRoutes"));
-app.use("/api/services", require("./routes/serviceRoutes"));
-app.use("/api/reuse", require("./routes/reuseIdeaRoutes"));
-app.use("/api/stats", require("./routes/statsRoutes"));
-
-// ================= MODEL SAFETY =================
-try {
-  require("./models/reuseIdeaModel");
-} catch (err) {}
-
-try {
-  require("./models/serviceModel");
-} catch (err) {}
+app.use("/api/waste", wasteRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/services", serviceRoutes);
+app.use("/api/reuse", reuseIdeaRoutes);
 
 // ================= TEST ROUTE =================
 app.get("/", (req, res) => {
