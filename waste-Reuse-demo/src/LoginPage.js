@@ -17,7 +17,8 @@ function LoginPage() {
     }
   }, [navigate]);
 
-  const handleLogin = (event) => {
+  // Changed to async to handle the database call
+  const handleLogin = async (event) => {
     event.preventDefault();
 
     if (!email.trim() || !password.trim()) {
@@ -25,16 +26,35 @@ function LoginPage() {
       return;
     }
 
-    const localUser = {
-      userId: `local-${email.trim().toLowerCase()}`,
-      email: email.trim().toLowerCase(),
-      role: "user",
-      authSource: "local"
-    };
+    try {
+      // --- NEW: API call to your backend ---
+      const response = await fetch("http://localhost:5000/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password: password, // sending to backend for verification
+        }),
+      });
 
-    localStorage.setItem("user", JSON.stringify(localUser));
-    setError("");
-    navigate("/", { replace: true });
+      const data = await response.json();
+
+      if (response.ok) {
+        // If login/creation is successful in DB, save the returned user to localStorage
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setError("");
+        navigate("/", { replace: true });
+      } else {
+        // Show error message from backend (e.g., "Invalid credentials")
+        setError(data.message || "Login failed. Please try again.");
+      }
+    } catch (err) {
+      console.error("Login Error:", err);
+      setError("Cannot connect to server. Ensure backend is running on port 5000.");
+    }
+    // --- End of API call ---
   };
 
   return (
