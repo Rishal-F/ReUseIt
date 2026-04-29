@@ -11,12 +11,21 @@ function CommunityStats({ refreshKey }) {
 
   useEffect(() => {
     const fetchStats = async () => {
+      setError("");
       try {
         const response = await API.get("/stats");
         setStats(response.data);
       } catch (err) {
-        console.error("Community stats fetch failed:", err);
-        setError("Unable to load community statistics at this time.");
+        // Retry once after a short delay for cold-starting backend services.
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 1200));
+          const retryResponse = await API.get("/stats");
+          setStats(retryResponse.data);
+          return;
+        } catch (retryErr) {
+          console.error("Community stats fetch failed:", retryErr);
+          setError("Unable to load community statistics at this time.");
+        }
       }
     };
 

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import API from "../api";
 
 // Poll component will try server persistence and fall back to localStorage
 export default function Poll({ id, question, options = [] }) {
   const storageKey = `poll_${id}`;
+  const optionsKey = useMemo(() => JSON.stringify(options), [options]);
   const [results, setResults] = useState(() => {
     try {
       const raw = localStorage.getItem(storageKey);
@@ -23,7 +24,18 @@ export default function Poll({ id, question, options = [] }) {
         setResults({ counts: res.data.counts, voted: false });
         return;
       } catch (err) {
-        // fallback to local
+        // Auto-create the poll if it does not exist yet on backend
+        if (err?.response?.status === 404) {
+          try {
+            await API.post("/polls", { pollId: id, question, options: JSON.parse(optionsKey) });
+            const seeded = await API.get(`/polls/${encodeURIComponent(id)}`);
+            if (!mounted) return;
+            setResults({ counts: seeded.data.counts, voted: false });
+            return;
+          } catch (seedErr) {
+            // fallback to local below
+          }
+        }
       }
 
       try {
@@ -34,7 +46,7 @@ export default function Poll({ id, question, options = [] }) {
 
     load();
     return () => (mounted = false);
-  }, [id, storageKey, options]);
+  }, [id, storageKey, question, optionsKey]);
 
   const vote = async (index) => {
     if (results.voted) return;

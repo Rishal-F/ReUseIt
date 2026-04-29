@@ -200,7 +200,11 @@ function MainApp() {
 
   const openTutorialSearch = (item) => {
     const searchQuery = `${item.trim()} reuse ideas`;
-    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`, "_blank");
+    const targetUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
+    const popup = window.open(targetUrl, "_blank", "noopener,noreferrer");
+    if (!popup) {
+      window.location.assign(targetUrl);
+    }
   };
 
   const openNearbyMap = () => {
@@ -209,10 +213,11 @@ function MainApp() {
       return;
     }
 
-    window.open(
-      `https://www.google.com/maps/search/${encodeURIComponent(serviceKeyword)}+near+${locationCoords.lat},${locationCoords.lng}`,
-      "_blank"
-    );
+    const targetUrl = `https://www.google.com/maps/search/${encodeURIComponent(serviceKeyword)}+near+${locationCoords.lat},${locationCoords.lng}`;
+    const popup = window.open(targetUrl, "_blank", "noopener,noreferrer");
+    if (!popup) {
+      window.location.assign(targetUrl);
+    }
   };
 
   const refreshLocation = () => {
