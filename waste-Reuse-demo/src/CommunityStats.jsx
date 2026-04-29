@@ -116,7 +116,7 @@ function CommunityStats({ refreshKey }) {
       <div style={{ marginTop: 20, maxWidth: 720, marginLeft: "auto", marginRight: "auto", display: "flex", gap: 20, alignItems: "flex-start" }}>
         <div style={{ flex: 1 }}>
           <Poll
-            id="reuse_preference"
+            id="reuse-preference"
             question="Which reuse approach do you prefer?"
             options={["Repair", "Donate", "Repurpose", "Sell"]}
           />
